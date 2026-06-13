@@ -12,6 +12,7 @@ func main() {
 	//fmt.Println(tools.GetTodayMetadata())
 	//fmt.Println(tools.GetSearchResults("golan tutorial", 3))
 	//fmt.Println(tools.GetPageContent("github.com/mark3labs/mcp-go/mcp"))
+	//fmt.Println(tools.ExecuteCurl("GET", "http://localhost:56789/verb/exercise?tense=SIMPLE_PRESENT&pronoun=FIRST_PERSON_SINGULAR&random_limit=1"))
 	prepareServer()
 }
 
@@ -46,9 +47,23 @@ func prepareServer() {
 		),
 	)
 
+	curlApiTool := mcp.NewTool("curl_api",
+		mcp.WithDescription("Performs an API call"),
+		mcp.WithString("method",
+			mcp.Required(),
+			mcp.Description("Must be GET, POST, PUT, DELETE, PATCH, HEAD, or OPTIONS"),
+			mcp.DefaultString("GET"),
+		),
+		mcp.WithString("url",
+			mcp.Required(),
+			mcp.Description("Url with http or https, domain, and query params"),
+		),
+	)
+
 	s.AddTool(todayMetadataTool, tools.TodayMetadataHandler)
 	s.AddTool(searchResultsTool, tools.SearchResultsHandler)
 	s.AddTool(getPageContentsTool, tools.GetPageContentHandler)
+	s.AddTool(curlApiTool, tools.CurlAPIHandler)
 
 	if err := server.ServeStdio(s); err != nil {
 		fmt.Printf("Server error: %v\n", err)
